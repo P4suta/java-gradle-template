@@ -1,0 +1,19 @@
+# typos config (https://github.com/crate-ci/typos). Runs on staged files via the lefthook
+# pre-commit hook, including .java since a typo in an output string is a wrong answer.
+
+[files]
+extend-exclude = [
+  ".git/",
+  "build/",
+  ".gradle/",
+  "gradle/wrapper/gradle-wrapper.jar",
+  "gradlew",
+  "gradlew.bat",
+]
+ignore-hidden = false
+
+[default]
+check-filename = false
+
+[default.extend-words]
+# add "wrong = correct" entries for false positives

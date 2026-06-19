@@ -1,0 +1,18 @@
+# Keep the build context small: exclude build outputs and local env.
+.git
+.gradle
+build
+**/build
+**/.gradle
+
+.idea
+*.iml
+.vscode
+.DS_Store
+
+.mise
+.tool-versions.local
+
+.github
+*.md
+!README.md

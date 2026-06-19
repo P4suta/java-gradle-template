@@ -1,0 +1,11 @@
+{
+  "Exclude": [
+    "build/",
+    "\\.gradle/",
+    "gradle/wrapper/",
+    "gradlew",
+    "\\.jar$",
+    "^LICENSE$",
+    "^NOTICE$"
+  ]
+}

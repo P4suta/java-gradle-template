@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<!--
+  Practical, not pedantic: skip cosmetic style (indent width, mandatory Javadoc) and keep
+  the checks that catch real problems (unused imports, braces, equals/hashCode, utility classes).
+-->
+<module name="Checker">
+  <property name="severity" value="error"/>
+  <property name="charset" value="UTF-8"/>
+  <property name="fileExtensions" value="java"/>
+
+  <module name="SuppressionFilter">
+    <property name="file" value="${config_loc}/suppressions.xml"/>
+  </module>
+
+  <module name="LineLength">
+    <property name="max" value="160"/>
+    <property name="ignorePattern" value="^\s*\*"/>
+  </module>
+  <module name="FileTabCharacter"/>
+  <module name="RegexpSingleline">
+    <property name="format" value="\s+$"/>
+    <property name="message" value="Trailing whitespace"/>
+  </module>
+
+  <module name="TreeWalker">
+    <!-- imports -->
+    <module name="AvoidStarImport"/>
+    <module name="RedundantImport"/>
+    <module name="UnusedImports"/>
+
+    <!-- structure -->
+    <module name="OneTopLevelClass"/>
+    <module name="NeedBraces"/>
+    <module name="LeftCurly"/>
+    <module name="RightCurly"/>
+    <module name="EmptyBlock">
+      <property name="option" value="text"/>
+    </module>
+    <module name="OneStatementPerLine"/>
+    <module name="MultipleVariableDeclarations"/>
+    <module name="FallThrough"/>
+    <module name="EmptyStatement"/>
+    <module name="NoFinalizer"/>
+
+    <!-- correctness -->
+    <module name="EqualsHashCode"/>
+    <module name="SimplifyBooleanExpression"/>
+    <module name="SimplifyBooleanReturn"/>
+    <module name="StringLiteralEquality"/>
+    <module name="FinalClass"/>
+    <module name="HideUtilityClassConstructor"/>
+
+    <!-- notation -->
+    <module name="MissingOverride"/>
+    <module name="UpperEll"/>
+    <module name="ModifierOrder"/>
+    <module name="RedundantModifier"/>
+
+    <!-- naming (defaults) -->
+    <module name="PackageName"/>
+    <module name="TypeName"/>
+    <module name="MethodName"/>
+    <module name="LocalVariableName"/>
+    <module name="ParameterName"/>
+    <module name="ConstantName"/>
+  </module>
+</module>

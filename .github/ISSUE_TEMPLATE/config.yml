@@ -1,0 +1,6 @@
+---
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & discussion
+    url: https://github.com/P4suta/java-gradle-template/discussions
+    about: Ask usage questions in Discussions

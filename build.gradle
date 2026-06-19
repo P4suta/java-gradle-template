@@ -1,0 +1,160 @@
+import net.ltgt.gradle.errorprone.CheckSeverity
+import com.github.spotbugs.snom.Effort
+import com.github.spotbugs.snom.Confidence
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'checkstyle'
+    id 'jacoco'
+    alias(libs.plugins.spotbugs)
+    alias(libs.plugins.errorprone)
+}
+
+group = 'track'
+version = '1.0.0'
+
+// Coverage gate. Defaults are low enough for the echo stub; raise per challenge.
+def lineCoverageMin = 0.80
+def branchCoverageMin = 0.70
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    mainClass = 'track.App'
+}
+
+dependencies {
+    errorprone libs.errorprone.core
+    errorprone libs.nullaway
+
+    testImplementation platform(libs.junit.bom)
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly libs.junit.platform.launcher
+    testImplementation libs.archunit.junit5
+}
+
+// Error Prone / NullAway. JDK 16+ needs these add-exports/add-opens for the javac internals.
+def errorproneJvmArgs = [
+    '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+    '--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+    '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
+]
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xlint:all,-processing,-this-escape']
+    options.fork = true
+    options.forkOptions.jvmArgs += errorproneJvmArgs
+    options.errorprone {
+        check('NullAway', CheckSeverity.ERROR)
+        option('NullAway:AnnotatedPackages', 'track')
+    }
+}
+
+// NullAway covers the main package only.
+tasks.named('compileTestJava') {
+    options.errorprone {
+        check('NullAway', CheckSeverity.OFF)
+    }
+}
+
+checkstyle {
+    toolVersion = libs.versions.checkstyle.get()
+    configFile = file('config/checkstyle/checkstyle.xml')
+    maxWarnings = 0
+}
+
+spotbugs {
+    toolVersion = libs.versions.spotbugs.get()
+    effort = Effort.valueOf('MAX')
+    reportLevel = Confidence.valueOf('MEDIUM')
+    excludeFilter = file('config/spotbugs/exclude.xml')
+}
+tasks.named('spotbugsMain') {
+    reports {
+        html { required = true }
+    }
+}
+tasks.named('spotbugsTest') {
+    enabled = false
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    // Differential sweep count, overridable with -Dsweep.count=<N>.
+    systemProperty 'sweep.count', System.getProperty('sweep.count', '2000')
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+    finalizedBy 'jacocoTestReport'
+}
+
+// JaCoCo report + coverage gate wired into check/build.
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
+tasks.named('jacocoTestReport') {
+    dependsOn 'test'
+    reports {
+        html.required = true
+        xml.required = true
+    }
+}
+tasks.named('jacocoTestCoverageVerification') {
+    dependsOn 'test'
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = lineCoverageMin
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = branchCoverageMin
+            }
+        }
+    }
+}
+tasks.named('check') {
+    dependsOn 'jacocoTestCoverageVerification'
+}
+
+// Runnable jar (used by the GHCR runtime image) + reproducible archives.
+tasks.named('jar') {
+    manifest {
+        attributes('Main-Class': 'track.App')
+    }
+}
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+// Run with a sample on stdin:  ./gradlew runSample -PsampleIn=src/test/resources/samples/00_sample_00.in
+tasks.register('runSample', JavaExec) {
+    group = 'application'
+    description = 'Run with a sample file piped to stdin'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'track.App'
+    def sampleIn = providers.gradleProperty('sampleIn').orElse('src/test/resources/samples/00_sample_00.in')
+    doFirst {
+        standardInput = new FileInputStream(file(sampleIn.get()))
+    }
+}

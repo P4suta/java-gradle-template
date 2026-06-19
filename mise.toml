@@ -1,0 +1,25 @@
+# Project-pinned tools. Global CLIs live in your own dotfiles; this pins what the repo needs.
+# Setup: `mise trust && mise install`, then `just setup`.
+# Gradle comes from the wrapper (8.14.1); only the JDK and dev tools are pinned here.
+
+[tools]
+# Match the judge runtime (Amazon Corretto 21); the code is JDK-vendor-neutral.
+java = "corretto-21"
+
+just = "latest"
+lefthook = "latest"
+
+# Lint tools invoked by the lefthook pre-commit hook.
+"github:crate-ci/typos" = "latest"
+taplo = "latest"
+shellcheck = "latest"
+"aqua:editorconfig-checker/editorconfig-checker" = "latest"
+gitleaks = "latest"
+actionlint = "latest"
+hadolint = "latest"
+
+# uv runs yamllint and zizmor ephemerally via uvx.
+uv = "latest"
+
+[settings]
+experimental = true

@@ -1,0 +1,48 @@
+---
+# Git hooks (run `just setup` or `lefthook install` to wire them in).
+# Requires `mise install` (typos/taplo/shellcheck/ec/gitleaks/actionlint/hadolint/uv).
+#   pre-commit: lint staged files + full build gate
+#   pre-push:   re-run pre-commit over the whole tree
+
+# Don't let mise auto-install undeclared tools when a shim is invoked.
+env:
+  MISE_AUTO_INSTALL: 'false'
+
+pre-commit:
+  parallel: true
+  commands:
+    typos:
+      run: typos {staged_files}
+      glob: "*.{java,md,toml,yaml,yml,gradle,json,txt}"
+    taplo:
+      run: taplo lint {staged_files}
+      glob: "*.toml"
+    yamllint:
+      run: uvx --from yamllint yamllint -c .yamllint {staged_files}
+      glob: "*.{yml,yaml}"
+    shellcheck:
+      run: shellcheck --severity=style --enable=all -x {staged_files}
+      glob: "*.sh"
+    editorconfig:
+      run: ec {staged_files}
+      glob: "*.{java,gradle,toml,yaml,yml,md,json,xml,properties,sh,txt}"
+    gitleaks:
+      run: gitleaks protect --staged --redact --no-banner
+    actionlint:
+      run: actionlint {staged_files}
+      glob: ".github/workflows/*.{yml,yaml}"
+    zizmor:
+      run: uvx zizmor {staged_files}
+      glob: ".github/workflows/*.{yml,yaml}"
+    hadolint:
+      run: hadolint {staged_files}
+      glob: "Dockerfile*"
+    build:
+      run: ./gradlew build --console=plain
+      glob: "*.{java,gradle}"
+
+pre-push:
+  parallel: true
+  commands:
+    all-files:
+      run: lefthook run pre-commit --all-files

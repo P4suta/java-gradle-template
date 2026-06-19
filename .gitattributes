@@ -1,0 +1,12 @@
+# Normalize line endings to LF so CRLF in sample .in/.out can't break SampleIoTest's
+# exact-match comparison across platforms.
+* text=auto eol=lf
+
+# Windows batch files use CRLF.
+*.bat text eol=crlf
+
+# Binaries / generated files.
+*.jar binary
+gradle/wrapper/gradle-wrapper.jar binary linguist-vendored
+gradlew linguist-generated
+gradlew.bat linguist-generated

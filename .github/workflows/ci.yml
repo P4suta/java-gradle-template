@@ -1,0 +1,93 @@
+---
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & test (ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        with:
+          persist-credentials: false
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@ed408507eac070d1f99cc633dbcf757c94c7933a  # v4
+      - name: Set up JDK 21 (Corretto)
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9  # v4
+        with:
+          distribution: corretto
+          java-version: "21"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a  # v4
+      - name: Build (quality gates + tests + coverage)
+        run: ./gradlew clean build --console=plain
+      - name: Upload reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
+        with:
+          name: reports
+          path: build/reports/
+          if-no-files-found: ignore
+
+  cross-platform:
+    name: Build (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        with:
+          persist-credentials: false
+      - name: Set up JDK 21 (Corretto)
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9  # v4
+        with:
+          distribution: corretto
+          java-version: "21"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a  # v4
+      - name: Build
+        run: ./gradlew clean build --console=plain
+
+  lint:
+    name: Lint & scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        with:
+          persist-credentials: false
+      - name: Set up mise tools
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac  # v2
+        with:
+          experimental: true
+      - name: typos (spell check)
+        run: typos
+      - name: taplo (TOML)
+        run: taplo lint
+      - name: yamllint
+        run: uvx --from yamllint yamllint -c .yamllint .
+      - name: editorconfig-checker
+        run: ec
+      - name: actionlint (workflows)
+        run: actionlint
+      - name: zizmor (workflow security)
+        run: uvx zizmor .github/workflows
+      - name: hadolint (Dockerfiles)
+        run: hadolint Dockerfile Dockerfile.toolchain
+      - name: gitleaks (secret scan)
+        run: gitleaks dir . --redact --no-banner

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+  <!--
+    Test-only relaxations. ArchUnit rules are declared as camelCase static final fields and
+    their holder class is effectively a utility but needs no private constructor, so
+    ConstantName and HideUtilityClassConstructor are suppressed under src/test.
+  -->
+  <suppress files="[\\/]src[\\/]test[\\/]" checks="ConstantName"/>
+  <suppress files="[\\/]src[\\/]test[\\/]" checks="HideUtilityClassConstructor"/>
+</suppressions>
