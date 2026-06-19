@@ -6,19 +6,33 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    labels: ["dependencies", "java"]
+    commit-message:
+      prefix: build
     groups:
       gradle:
-        patterns:
-          - "*"
+        update-types: ["minor", "patch"]
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+    labels: ["dependencies", "ci"]
+    commit-message:
+      prefix: ci
     groups:
-      github-actions:
-        patterns:
-          - "*"
+      actions:
+        patterns: ["*"]
   - package-ecosystem: docker
     directory: "/"
     schedule:
       interval: weekly
+    labels: ["dependencies", "docker"]
+    commit-message:
+      prefix: build
+    groups:
+      docker:
+        update-types: ["minor", "patch"]
+    # Keep the Gradle base image on 8.x to match the wrapper; majors break the runtime build.
+    ignore:
+      - dependency-name: gradle
+        update-types: ["version-update:semver-major"]

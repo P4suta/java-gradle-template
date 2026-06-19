@@ -39,6 +39,7 @@ jobs:
         with:
           languages: java-kotlin
           build-mode: manual
+          queries: security-extended
       - name: Build for analysis
         run: ./gradlew clean compileJava compileTestJava --console=plain
       - name: Perform CodeQL Analysis
