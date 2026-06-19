@@ -29,6 +29,11 @@ dev:
 build:
     {{_dr}}./gradlew clean build {{_daemon}} --console=plain
 
+# Set the solution's Java release target (e.g. `just release 8`); default 21, range 8..21.
+release version:
+    sed -E 's/^javaRelease=.*/javaRelease={{version}}/' gradle.properties > gradle.properties.tmp && mv gradle.properties.tmp gradle.properties
+    @echo "javaRelease={{version}}: src/main now targets Java {{version}} (run: just build)"
+
 # Tests only (differential sweep defaults to 2000).
 test:
     {{_dr}}./gradlew test {{_daemon}} --console=plain

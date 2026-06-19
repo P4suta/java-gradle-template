@@ -14,6 +14,13 @@ plugins {
 group = 'track'
 version = '1.0.0'
 
+// Solution (src/main) compile target. Switch per submission with -PjavaRelease=N or `just release N`.
+// Tools, tests, and the toolchain stay on JDK 21; only the produced bytecode/API level changes.
+def javaRelease = (project.findProperty('javaRelease') ?: '21').toString().toInteger()
+if (javaRelease < 8 || javaRelease > 21) {
+    throw new GradleException("javaRelease must be 8..21 (toolchain is JDK 21); raise the toolchain to target newer.")
+}
+
 // Coverage gate. Defaults are low enough for the echo stub; raise per challenge.
 def lineCoverageMin = 0.80
 def branchCoverageMin = 0.70
@@ -71,6 +78,15 @@ tasks.withType(JavaCompile).configureEach {
 tasks.named('compileTestJava') {
     options.errorprone {
         check('NullAway', CheckSeverity.OFF)
+    }
+}
+
+// Compile the solution to the chosen Java release; tests keep using the JDK 21 toolchain.
+tasks.named('compileJava') {
+    options.release = javaRelease
+    if (javaRelease < 21) {
+        // Silence the "source/target N is obsolete" note when targeting an older release.
+        options.compilerArgs += ['-Xlint:-options']
     }
 }
 

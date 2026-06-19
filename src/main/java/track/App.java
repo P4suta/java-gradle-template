@@ -17,13 +17,13 @@ public final class App {
   }
 
   public static void main(String[] args) throws IOException {
-    var br = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8), 1 << 20);
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8), 1 << 20);
     System.out.print(run(br));
   }
 
   /** Reads all input and returns the response, one newline-terminated line per input line. */
   static String run(BufferedReader br) throws IOException {
-    var out = new StringBuilder();
+    StringBuilder out = new StringBuilder();
     String line = br.readLine();
     while (line != null) {
       out.append(line).append('\n');

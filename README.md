@@ -27,6 +27,19 @@ recipe to run inside `gradle:8.14.1-jdk21` instead.
    - `src/test/resources/samples/` — `NN_name.in` / `NN_name.out` pairs (auto-discovered).
 4. Run `just build` until green.
 
+## Target Java version (per submission)
+
+Judges differ in Java version, so the solution's compile target is a one-knob switch:
+
+```sh
+just release 8                 # compile src/main against Java 8 (range 8..21; default 21)
+./gradlew build -PjavaRelease=8 # or ad hoc, without persisting
+```
+
+The toolchain, tests, CI, and Docker all stay on JDK 21 — only `src/main`'s bytecode/API level
+changes (via `--release`), so newer-API usage is caught at build time. CI builds every target
+(8 / 11 / 17 / 21) to keep the switch honest.
+
 ## Commands
 
 | Command | What |
@@ -34,6 +47,7 @@ recipe to run inside `gradle:8.14.1-jdk21` instead.
 | `just setup` | Install hooks, warm caches (one-time) |
 | `just dev` | Re-run tests on change (fast loop) |
 | `just build` | All quality gates + tests + coverage |
+| `just release <N>` | Set the solution's Java compile target (8..21) |
 | `just test` | Tests only (sweep 2000) |
 | `just sweep 30000` | Differential sweep with a given count |
 | `just coverage` | Coverage report (HTML) |

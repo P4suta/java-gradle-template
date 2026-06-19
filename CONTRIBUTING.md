@@ -9,6 +9,9 @@ just setup
 
 JDK 21 on `PATH` works without mise; with no JDK, use `USE_DOCKER=1 just build`.
 
+The toolchain is always JDK 21; to target a different Java version for `src/main`, use
+`just release <N>` (or `-PjavaRelease=<N>`, range 8..21).
+
 ## Workflow
 
 1. Branch.
