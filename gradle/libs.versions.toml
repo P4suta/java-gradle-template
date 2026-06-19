@@ -3,7 +3,7 @@
 [versions]
 errorprone = "2.50.0"
 nullaway = "0.13.7"
-junit = "5.11.4"
+junit = "6.1.0"
 archunit = "1.4.2"
 checkstyle = "10.20.1"
 spotbugs = "4.8.6"
