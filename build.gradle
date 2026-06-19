@@ -57,7 +57,8 @@ def errorproneJvmArgs = [
 ]
 
 tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs += ['-Xlint:all,-processing,-this-escape']
+    // -XDaddTypeAnnotationsToSymbol=true is required by Error Prone 2.37+ on JDK 21.
+    options.compilerArgs += ['-Xlint:all,-processing,-this-escape', '-XDaddTypeAnnotationsToSymbol=true']
     options.fork = true
     options.forkOptions.jvmArgs += errorproneJvmArgs
     options.errorprone {
