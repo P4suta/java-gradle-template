@@ -3,10 +3,12 @@
 * text=auto eol=lf
 
 # Windows batch files use CRLF.
-*.bat text eol=crlf
 
 # Binaries / generated files.
 *.jar binary
 gradle/wrapper/gradle-wrapper.jar binary linguist-vendored
 gradlew linguist-generated
 gradlew.bat linguist-generated
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
