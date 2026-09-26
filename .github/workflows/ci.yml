@@ -82,7 +82,7 @@ jobs:
       - name: yamllint
         run: uvx --from yamllint yamllint -c .yamllint .
       - name: editorconfig-checker
-        run: ec
+        run: editorconfig-checker
       - name: actionlint (workflows)
         run: actionlint
       - name: zizmor (workflow security)

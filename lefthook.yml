@@ -24,7 +24,7 @@ pre-commit:
       run: shellcheck --severity=style --enable=all -x {staged_files}
       glob: "*.sh"
     editorconfig:
-      run: ec {staged_files}
+      run: editorconfig-checker {staged_files}
       glob: "*.{java,gradle,toml,yaml,yml,md,json,xml,properties,sh,txt}"
     gitleaks:
       run: gitleaks protect --staged --redact --no-banner
