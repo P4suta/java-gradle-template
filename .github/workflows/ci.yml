@@ -113,3 +113,21 @@ jobs:
         uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92  # v6.2.0
       - name: Build for release target
         run: ./gradlew clean build -PjavaRelease=${{ matrix.release }} --console=plain
+
+  # The one status check branch protection requires,
+  # named the same in every P4suta repository.
+  # It passes only when every job it needs succeeded or was skipped.
+  required:
+    name: required
+    if: always()
+    needs: [build, cross-platform, lint, release-targets]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Fail unless every needed job succeeded or was skipped
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: |
+          echo "${RESULTS}"
+          jq -e 'all(.[]; IN("success", "skipped"))' <<< "${RESULTS}"
