@@ -10,4 +10,5 @@ Use GitHub private vulnerability reporting (Security → "Report a vulnerability
 maintainer (@P4suta) privately if it is disabled. Please allow time to release a fix before
 public disclosure.
 
-Dependencies are updated weekly by Dependabot; workflows are scanned by CodeQL.
+Mend-hosted Renovate proposes routine dependency updates each week.
+Workflows are scanned by CodeQL.

@@ -1,4 +1,5 @@
-# Dependency, tool, and plugin versions. Dependabot (gradle) updates these.
+# Dependency, tool, and plugin versions.
+# Renovate updates these each week.
 
 [versions]
 errorprone = "2.50.0"
