@@ -8,7 +8,7 @@ COPY . .
 RUN gradle --no-daemon --console=plain clean jar
 
 # ---- runtime: distroless JRE ----
-FROM gcr.io/distroless/java21-debian12:nonroot AS runtime
+FROM gcr.io/distroless/java21-debian12:nonroot@sha256:7e37784d94dccbf5ccb195c73b295f5ad00cd266512dfbac12eb9c3c28f8077d AS runtime
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar /app/app.jar
 # Pipe input on stdin:  docker run -i --rm <image> < input.txt

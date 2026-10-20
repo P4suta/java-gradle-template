@@ -45,4 +45,5 @@ pre-push:
   parallel: true
   commands:
     all-files:
+      files: git ls-files
       run: lefthook run pre-commit --all-files
