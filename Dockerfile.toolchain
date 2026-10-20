@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
-# Dev/CI toolchain image: JDK 21 + Gradle + lint tools, pinned via the same mise.toml.
-# Example: docker run --rm -v "$PWD":/work ghcr.io/p4suta/java-gradle-template:toolchain ./gradlew build
+# Local development image with the project's mise tools.
+# Build: docker build -f Dockerfile.toolchain -t java-gradle-toolchain .
 
-FROM debian:bookworm-slim
+FROM debian:bookworm-slim@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587
 
 # Fail on errors in piped commands (hadolint DL4006).
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]

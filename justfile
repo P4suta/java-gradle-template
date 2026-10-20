@@ -1,12 +1,12 @@
-# Dev tasks. Native by default (mise's JDK + Gradle wrapper). Set USE_DOCKER=1 to run the
-# same recipe inside gradle:8.14.1-jdk21 (no host JDK needed).
+# Dev tasks use the Gradle wrapper and project tools.
+# Set USE_DOCKER=1 to use the official Gradle container.
 #   just build              # native
 #   USE_DOCKER=1 just build # Docker
 
 use_docker := env_var_or_default("USE_DOCKER", "0")
 uid := `id -u 2>/dev/null || echo 1000`
 gid := `id -g 2>/dev/null || echo 1000`
-img := "gradle:8.14.1-jdk21"
+img := "gradle:9.8.1-jdk21@sha256:5ec5f726f14851a11a1bac6e6a5720e41062c33357053e7717eb0d189a6f1db9"
 
 # Docker prefix, only when USE_DOCKER=1 (host user; deps cached in a named volume).
 _dr := if use_docker == "1" { "docker run --rm --user " + uid + ":" + gid + ' -e GRADLE_USER_HOME=/cache -e HOME=/tmp -v "$PWD":/work -v practice-gradle:/cache -w /work ' + img + " " } else { "" }
