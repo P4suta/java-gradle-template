@@ -1,6 +1,6 @@
 # Project-pinned tools. Global CLIs live in your own dotfiles; this pins what the repo needs.
 # Setup: `mise trust && mise install`, then `just setup`.
-# Gradle comes from the wrapper (8.14.1); only the JDK and dev tools are pinned here.
+# Gradle comes from the committed wrapper.
 
 [tools]
 # Match the judge runtime (Amazon Corretto 21); the code is JDK-vendor-neutral.

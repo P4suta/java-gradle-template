@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-# Dev/CI toolchain image: JDK 21 + Gradle + lint tools, pinned via the same mise.toml.
-# Example: docker run --rm -v "$PWD":/work ghcr.io/p4suta/java-gradle-template:toolchain ./gradlew build
+# Local development image with the project's mise tools.
+# Build: docker build -f Dockerfile.toolchain -t java-gradle-toolchain .
 
 FROM debian:bookworm-slim
 
