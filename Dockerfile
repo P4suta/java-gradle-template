@@ -2,7 +2,7 @@
 # Minimal runtime image for the App: build the jar, then run it on a distroless JRE.
 
 # ---- build: produce the runnable jar ----
-FROM gradle:9.8.2-jdk21@sha256:85f8f572045bfb31874d66d7d8a2bd0c17d8cb9ad34b6a4d02f5d552b4b92c04 AS build
+FROM gradle:9.9.1-jdk21@sha256:607055593f1acc874a98aa7c1cb5adb414b3879bb0a5e1e7240180020fb97277 AS build
 WORKDIR /app
 COPY . .
 RUN gradle --no-daemon --console=plain clean jar
