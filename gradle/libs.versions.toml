@@ -2,8 +2,8 @@
 # Renovate updates these each week.
 
 [versions]
-errorprone = "2.52.0"
-nullaway = "0.14.3"
+errorprone = "2.53.0"
+nullaway = "0.14.4"
 junit = "6.1.3"
 archunit = "1.5.1"
 checkstyle = "14.4.0"
